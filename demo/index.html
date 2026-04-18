@@ -267,7 +267,7 @@
       domain: 'datahub.austintexas.gov',
       dataset: 'h3i4-5e5v',
       nameField: 'last',
-      amountField: null,
+      firstField: 'first',
       dateField: null,
       claimUrl: 'https://www.austintexas.gov/finance/unclaimed-property',
       state: 'TX',
@@ -276,7 +276,7 @@
       id: 'CA_SONOMA',
       name: 'Sonoma County, CA — Stale Dated Checks',
       domain: 'data.sonomacounty.ca.gov',
-      dataset: '7en4-f9wn',
+      dataset: '7zt2-w5w6',
       nameField: 'payeename',
       amountField: 'issueamount',
       dateField: 'issuedate',
@@ -346,7 +346,11 @@
       if (!resp.ok) return [];
       const rows = await resp.json();
       return rows.map(row => {
-        const name = row[src.nameField] || '';
+        // TX Austin stores last + first separately; combine them
+        let name = row[src.nameField] || '';
+        if (src.firstField && row[src.firstField]) {
+          name = `${row[src.firstField]} ${name}`.trim();
+        }
         const conf = tokenSimilarity(query, name);
         const amountRaw = src.amountField ? row[src.amountField] : null;
         const amount = amountRaw ? parseFloat(String(amountRaw).replace(/[,$]/g, '')) : null;
