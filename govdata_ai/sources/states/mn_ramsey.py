@@ -1,6 +1,8 @@
 """Minnesota — Ramsey County missing heirs / unclaimed estates (Socrata open data)"""
+from __future__ import annotations
 from govdata_ai.sources.base import SocrataSource
 from govdata_ai.sources.registry import register
+from govdata_ai.models import SearchResult
 
 
 @register("MN_RAMSEY")
@@ -22,7 +24,6 @@ class RamseyCountyMNSource(SocrataSource):
 
     async def search(self, name: str) -> list[SearchResult]:  # type: ignore[override]
         """Also search by estate_of field (deceased person's name)."""
-        from govdata_ai.models import SearchResult
         results = await super().search(name)
         seen_keys = {(r.name, r.amount) for r in results}
 
