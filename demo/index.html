@@ -338,8 +338,8 @@
 
   async function searchSource(src, query) {
     const lastName = query.trim().split(/\s+/).pop().toUpperCase();
-    const where = `upper(${src.nameField}) like upper('%${encodeURIComponent(lastName)}%')`;
-    const url = `https://${src.domain}/resource/${src.dataset}.json?$where=${where}&$limit=100`;
+    const where = `upper(${src.nameField}) like upper('%${lastName}%')`;
+    const url = `https://${src.domain}/resource/${src.dataset}.json?$where=${encodeURIComponent(where)}&$limit=100`;
 
     try {
       const resp = await fetch(url);
