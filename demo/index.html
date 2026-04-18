@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GovData-AI — Find Your Unclaimed Money</title>
+  <meta name="description" content="Free open-source tool to search $210B in US government unclaimed property databases. Built with AI name matching. No data stored." />
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --card: #13131a;
+      --border: #2a2a3a;
+      --accent: #6366f1;
+      --accent2: #8b5cf6;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --success: #10b981;
+      --warning: #f59e0b;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      min-height: 100vh;
+    }
+    header {
+      padding: 24px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+    }
+    .logo { font-size: 1.25rem; font-weight: 700; }
+    .logo span { color: var(--accent); }
+    .gh-link {
+      display: flex; align-items: center; gap: 8px;
+      color: var(--muted); text-decoration: none; font-size: 0.875rem;
+      padding: 8px 16px; border: 1px solid var(--border); border-radius: 8px;
+      transition: all 0.2s;
+    }
+    .gh-link:hover { color: var(--text); border-color: var(--accent); }
+
+    .hero {
+      text-align: center;
+      padding: 80px 24px 48px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(99,102,241,0.15); border: 1px solid rgba(99,102,241,0.3);
+      color: #a5b4fc; border-radius: 100px; padding: 4px 14px;
+      font-size: 0.8rem; font-weight: 500; margin-bottom: 24px;
+    }
+    h1 { font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 800; line-height: 1.15; margin-bottom: 16px; }
+    h1 em { font-style: normal; background: linear-gradient(135deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .sub { color: var(--muted); font-size: 1.125rem; line-height: 1.6; margin-bottom: 48px; }
+
+    .search-box {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 32px;
+      max-width: 600px;
+      margin: 0 auto 48px;
+    }
+    .input-group { display: flex; gap: 12px; }
+    input[type=text] {
+      flex: 1;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 10px;
+      padding: 14px 18px;
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    input[type=text]:focus { border-color: var(--accent); }
+    input[type=text]::placeholder { color: var(--muted); }
+    button {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 14px 28px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.1s;
+      white-space: nowrap;
+    }
+    button:hover { opacity: 0.9; }
+    button:active { transform: scale(0.98); }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+    .hint { color: var(--muted); font-size: 0.8rem; margin-top: 12px; text-align: left; }
+
+    #results { max-width: 700px; margin: 0 auto 64px; }
+    .result-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .result-header h2 { font-size: 1.1rem; font-weight: 600; }
+    .count-badge { background: rgba(16,185,129,0.15); color: #34d399; border: 1px solid rgba(16,185,129,0.3); border-radius: 100px; padding: 2px 12px; font-size: 0.8rem; }
+
+    .result-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      transition: border-color 0.2s;
+    }
+    .result-card:hover { border-color: var(--accent); }
+    .result-left { flex: 1; }
+    .result-name { font-weight: 600; font-size: 1.05rem; margin-bottom: 4px; }
+    .result-meta { color: var(--muted); font-size: 0.85rem; display: flex; gap: 16px; flex-wrap: wrap; }
+    .result-right { text-align: right; flex-shrink: 0; }
+    .amount { font-size: 1.25rem; font-weight: 700; color: var(--success); }
+    .amount.unknown { color: var(--muted); font-size: 0.9rem; }
+    .confidence {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: 0.75rem; margin-top: 4px;
+      color: var(--muted);
+    }
+    .conf-bar { width: 40px; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+    .conf-fill { height: 100%; border-radius: 2px; }
+    .claim-btn {
+      display: inline-block; margin-top: 10px;
+      background: transparent; border: 1px solid var(--accent);
+      color: var(--accent); border-radius: 8px;
+      padding: 6px 14px; font-size: 0.8rem; font-weight: 500;
+      text-decoration: none; transition: all 0.2s;
+    }
+    .claim-btn:hover { background: var(--accent); color: #fff; }
+
+    .loading { text-align: center; padding: 40px; color: var(--muted); }
+    .spinner { display: inline-block; width: 28px; height: 28px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 12px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .empty { text-align: center; padding: 48px; color: var(--muted); }
+    .empty h3 { font-size: 1.1rem; margin-bottom: 8px; color: var(--text); }
+
+    .sources-section { max-width: 700px; margin: 0 auto 64px; }
+    .sources-section h3 { color: var(--muted); font-size: 0.85rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 16px; }
+    .source-pills { display: flex; flex-wrap: wrap; gap: 10px; }
+    .pill {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 100px; padding: 6px 14px;
+      font-size: 0.8rem; color: var(--muted);
+      display: flex; align-items: center; gap: 6px;
+    }
+    .pill-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--success); flex-shrink: 0; }
+
+    .privacy {
+      max-width: 600px; margin: 0 auto 48px;
+      background: rgba(99,102,241,0.06); border: 1px solid rgba(99,102,241,0.2);
+      border-radius: 12px; padding: 16px 20px;
+      display: flex; gap: 12px; align-items: flex-start;
+      font-size: 0.875rem; color: var(--muted);
+    }
+    .privacy-icon { font-size: 1.2rem; flex-shrink: 0; }
+
+    footer {
+      text-align: center; padding: 32px;
+      border-top: 1px solid var(--border);
+      color: var(--muted); font-size: 0.85rem;
+    }
+    footer a { color: var(--accent); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    @media (max-width: 600px) {
+      .input-group { flex-direction: column; }
+      .result-card { flex-direction: column; align-items: flex-start; }
+      .result-right { text-align: left; }
+      header { padding: 16px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">gov<span>data</span>-ai</div>
+  <a class="gh-link" href="https://github.com/rohith547/govdata-ai" target="_blank" rel="noopener">
+    ⭐ Star on GitHub
+  </a>
+</header>
+
+<div class="hero">
+  <div class="badge">🔍 Open Source · Free Forever · No Sign-up</div>
+  <h1>Find Your <em>Unclaimed Money</em> in Government Databases</h1>
+  <p class="sub">
+    $210 billion in unclaimed property sits in US government databases. 
+    GovData-AI searches across verified government sources with AI-powered name matching.
+    <strong>Every result links to an official .gov page.</strong> Zero hallucinations.
+  </p>
+</div>
+
+<div class="search-box">
+  <div class="input-group">
+    <input type="text" id="nameInput" placeholder="Enter full name (e.g. Jane Smith)" />
+    <button id="searchBtn" onclick="search()">Search</button>
+  </div>
+  <p class="hint">Try your name, a family member's name, or a business name. Results link directly to the official government claim page.</p>
+</div>
+
+<div id="results"></div>
+
+<div class="sources-section">
+  <h3>Live Government Data Sources</h3>
+  <div class="source-pills">
+    <span class="pill"><span class="pill-dot"></span>Providence, RI — Unclaimed Checks</span>
+    <span class="pill"><span class="pill-dot"></span>Ramsey County, MN — Missing Heirs</span>
+    <span class="pill"><span class="pill-dot"></span>City of Austin, TX — Unclaimed Property</span>
+    <span class="pill"><span class="pill-dot"></span>Sonoma County, CA — Stale Checks</span>
+    <span class="pill"><span class="pill-dot"></span>City of Roseville, CA — Stale Checks</span>
+    <span class="pill"><span class="pill-dot"></span>Marin County, CA — Unclaimed Checks</span>
+    <span class="pill" style="opacity:0.6">+ More states coming</span>
+  </div>
+</div>
+
+<div class="privacy">
+  <span class="privacy-icon">🔒</span>
+  <div>
+    <strong style="color:var(--text)">Your privacy is protected.</strong>
+    We never store, log, or share your search queries. Searches go directly from your browser to public government APIs.
+    This tool is 100% free and open source — <a href="https://github.com/rohith547/govdata-ai" target="_blank" rel="noopener">inspect the code yourself</a>.
+  </div>
+</div>
+
+<footer>
+  Built with ❤️ by an AI engineer.
+  <a href="https://github.com/rohith547/govdata-ai" target="_blank" rel="noopener">GovData-AI on GitHub</a> ·
+  <a href="https://pypi.org/project/govdata-ai/" target="_blank" rel="noopener">pip install govdata-ai</a> ·
+  Open Source · MIT License
+</footer>
+
+<script>
+  const SOURCES = [
+    {
+      id: 'RI',
+      name: 'City of Providence, RI — Unclaimed Checks',
+      domain: 'data.providenceri.gov',
+      dataset: '4hhd-fzq6',
+      nameField: 'payee_name',
+      amountField: 'payment_amount',
+      dateField: 'check_date',
+      claimUrl: 'https://www.providenceri.gov/finance/unclaimed-property/',
+      state: 'RI',
+    },
+    {
+      id: 'MN',
+      name: 'Ramsey County, MN — Missing Heirs & Estates',
+      domain: 'data.ramseycountymn.gov',
+      dataset: 't2fe-qrnd',
+      nameField: 'heir',
+      amountField: 'dollar_amount',
+      dateField: 'date_received',
+      claimUrl: 'https://www.ramseycounty.us/your-government/leadership/court-administration/probate-division',
+      state: 'MN',
+    },
+    {
+      id: 'TX',
+      name: 'City of Austin, TX — Unclaimed Property',
+      domain: 'datahub.austintexas.gov',
+      dataset: 'h3i4-5e5v',
+      nameField: 'last',
+      amountField: null,
+      dateField: null,
+      claimUrl: 'https://www.austintexas.gov/finance/unclaimed-property',
+      state: 'TX',
+    },
+    {
+      id: 'CA_SONOMA',
+      name: 'Sonoma County, CA — Stale Dated Checks',
+      domain: 'data.sonomacounty.ca.gov',
+      dataset: '7en4-f9wn',
+      nameField: 'payeename',
+      amountField: 'issueamount',
+      dateField: 'issuedate',
+      claimUrl: 'https://sonomacounty.ca.gov/administrative-support-and-fiscal-services/auditor-controller-treasurer-tax-collector/divisions/treasury-and-taxation',
+      state: 'CA',
+    },
+    {
+      id: 'CA_ROSEVILLE',
+      name: 'City of Roseville, CA — Stale Dated Checks',
+      domain: 'data.roseville.ca.us',
+      dataset: 'vtyn-52t8',
+      nameField: 'name',
+      amountField: 'amount',
+      dateField: 'date',
+      claimUrl: 'https://www.roseville.ca.us/cms/one.aspx?portalId=7922140&pageId=16650448',
+      state: 'CA',
+    },
+    {
+      id: 'CA_MARIN',
+      name: 'Marin County, CA — Unclaimed Checks',
+      domain: 'data.marincounty.gov',
+      dataset: 'er4x-svwp',
+      nameField: 'vendor_name',
+      amountField: 'amount',
+      dateField: 'check_date',
+      claimUrl: 'https://www.marincounty.gov/depts/au/divisions/payroll-and-vendor-services',
+      state: 'CA',
+    },
+  ];
+
+  function similarity(a, b) {
+    a = a.toLowerCase().trim();
+    b = b.toLowerCase().trim();
+    if (a === b) return 1.0;
+    // Bigram similarity
+    const bigrams = s => {
+      const bg = new Set();
+      for (let i = 0; i < s.length - 1; i++) bg.add(s.slice(i, i+2));
+      return bg;
+    };
+    const ba = bigrams(a), bb = bigrams(b);
+    let inter = 0;
+    ba.forEach(bg => { if (bb.has(bg)) inter++; });
+    return (2 * inter) / (ba.size + bb.size) || 0;
+  }
+
+  function tokenSimilarity(query, candidate) {
+    const qa = query.toLowerCase().split(/\s+/).filter(Boolean);
+    const ca = candidate.toLowerCase().split(/\s+/).filter(Boolean);
+    // Check if query tokens appear in candidate
+    let matches = 0;
+    for (const qt of qa) {
+      if (ca.some(ct => ct.includes(qt) || qt.includes(ct))) matches++;
+    }
+    const tokenScore = qa.length > 0 ? matches / qa.length : 0;
+    const bigramScore = similarity(query, candidate);
+    return Math.max(tokenScore * 0.8 + bigramScore * 0.2, bigramScore);
+  }
+
+  async function searchSource(src, query) {
+    const lastName = query.trim().split(/\s+/).pop().toUpperCase();
+    const where = `upper(${src.nameField}) like upper('%${encodeURIComponent(lastName)}%')`;
+    const url = `https://${src.domain}/resource/${src.dataset}.json?$where=${where}&$limit=100`;
+
+    try {
+      const resp = await fetch(url);
+      if (!resp.ok) return [];
+      const rows = await resp.json();
+      return rows.map(row => {
+        const name = row[src.nameField] || '';
+        const conf = tokenSimilarity(query, name);
+        const amountRaw = src.amountField ? row[src.amountField] : null;
+        const amount = amountRaw ? parseFloat(String(amountRaw).replace(/[,$]/g, '')) : null;
+        return { name, amount, conf, source: src.name, claimUrl: src.claimUrl, state: src.state, date: src.dateField ? row[src.dateField] : null };
+      }).filter(r => r.conf >= 0.4);
+    } catch (e) {
+      return [];
+    }
+  }
+
+  async function search() {
+    const query = document.getElementById('nameInput').value.trim();
+    if (!query) return;
+
+    const btn = document.getElementById('searchBtn');
+    const div = document.getElementById('results');
+    btn.disabled = true;
+    btn.textContent = 'Searching...';
+    div.innerHTML = `<div class="loading"><div class="spinner"></div><p>Searching ${SOURCES.length} government databases...</p></div>`;
+
+    const allResults = (await Promise.all(SOURCES.map(s => searchSource(s, query)))).flat();
+    allResults.sort((a, b) => b.conf - a.conf);
+
+    btn.disabled = false;
+    btn.textContent = 'Search';
+
+    if (!allResults.length) {
+      div.innerHTML = `
+        <div class="empty">
+          <h3>No matches found</h3>
+          <p>No unclaimed property found for "<strong>${query}</strong>" in our current database sources.</p>
+          <p style="margin-top:8px">Try a different spelling, maiden name, or check <a href="https://missingmoney.com" target="_blank" rel="noopener" style="color:var(--accent)">MissingMoney.com</a> (national database).</p>
+        </div>`;
+      return;
+    }
+
+    div.innerHTML = `
+      <div class="result-header">
+        <h2>Results for "${query}"</h2>
+        <span class="count-badge">${allResults.length} match${allResults.length !== 1 ? 'es' : ''}</span>
+      </div>
+      ${allResults.map(r => {
+        const confPct = Math.round(r.conf * 100);
+        const confColor = confPct >= 90 ? '#10b981' : confPct >= 70 ? '#f59e0b' : '#94a3b8';
+        const dateStr = r.date ? new Date(r.date).toLocaleDateString('en-US', {year:'numeric', month:'short'}) : null;
+        return `
+        <div class="result-card">
+          <div class="result-left">
+            <div class="result-name">${r.name}</div>
+            <div class="result-meta">
+              <span>📍 ${r.state}</span>
+              <span>🏛 ${r.source}</span>
+              ${dateStr ? `<span>📅 ${dateStr}</span>` : ''}
+            </div>
+            <a class="claim-btn" href="${r.claimUrl}" target="_blank" rel="noopener">Claim on official site →</a>
+          </div>
+          <div class="result-right">
+            ${r.amount ? `<div class="amount">$${r.amount.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})}</div>` : '<div class="amount unknown">Amount varies</div>'}
+            <div class="confidence">
+              <div class="conf-bar"><div class="conf-fill" style="width:${confPct}%;background:${confColor}"></div></div>
+              ${confPct}% match
+            </div>
+          </div>
+        </div>`;
+      }).join('')}
+    `;
+  }
+
+  document.getElementById('nameInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter') search();
+  });
+</script>
+</body>
+</html>

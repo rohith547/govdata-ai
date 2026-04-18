@@ -7,7 +7,7 @@ name = "govdata-ai"
 version = "0.1.0"
 description = "Open source AI layer for US government databases — search $210B in unclaimed money across all 50 states"
 readme = "README.md"
-license = { file = "LICENSE" }
+license = "MIT"
 requires-python = ">=3.10"
 authors = [
   { name = "Shravya Reddy Yemreddy", email = "shravyareddyyemreddy@gmail.com" }
@@ -16,7 +16,6 @@ keywords = ["unclaimed-money", "government-data", "ai", "nlp", "fintech", "open-
 classifiers = [
   "Development Status :: 3 - Alpha",
   "Intended Audience :: Developers",
-  "License :: OSI Approved :: MIT License",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
@@ -44,10 +43,10 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/shravyareddyyemreddy/govdata-ai"
+Homepage = "https://github.com/rohith547/govdata-ai"
 Documentation = "https://govdata-ai.readthedocs.io"
-Repository = "https://github.com/shravyareddyyemreddy/govdata-ai"
-Issues = "https://github.com/shravyareddyyemreddy/govdata-ai/issues"
+Repository = "https://github.com/rohith547/govdata-ai"
+Issues = "https://github.com/rohith547/govdata-ai/issues"
 
 [tool.ruff]
 line-length = 88
@@ -56,3 +55,6 @@ target-version = "py310"
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
 testpaths = ["tests"]
+
+[tool.setuptools.packages.find]
+include = ["govdata_ai*"]
