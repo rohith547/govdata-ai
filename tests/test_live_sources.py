@@ -12,7 +12,7 @@ pytestmark = pytest.mark.skipif(
     reason="Live API tests: set GOVDATA_LIVE_TESTS=1 to run"
 )
 
-from govdata_ai.sources.states import ri, ca_sonoma, mn_ramsey, tx_austin
+from govdata_ai.sources.states import ri, ca_sonoma, mn_ramsey, tx_austin, ca_roseville, ca_marin
 from govdata_ai.sources.registry import get_source_for_state
 
 
@@ -62,3 +62,29 @@ async def test_ri_confidence_ordering():
     results = await src.search("Smith")
     confs = [r.confidence for r in results]
     assert confs == sorted(confs, reverse=True)
+
+
+@pytest.mark.asyncio
+async def test_roseville_ca_search():
+    src = get_source_for_state("CA_ROSEVILLE")
+    results = await src.search("Smith")
+    assert len(results) > 0
+    for r in results[:3]:
+        assert r.amount is not None
+        assert r.confidence >= 0.6
+
+
+@pytest.mark.asyncio
+async def test_marin_ca_search():
+    src = get_source_for_state("CA_MARIN")
+    results = await src.search("Vasquez")  # Known to exist in dataset
+    assert len(results) > 0
+    assert results[0].amount is not None
+
+
+@pytest.mark.asyncio
+async def test_all_sources_registered():
+    from govdata_ai.sources.registry import list_supported_states
+    states = list_supported_states()
+    expected = {"RI", "CA_SONOMA", "MN_RAMSEY", "TX_AUSTIN", "CA_ROSEVILLE", "CA_MARIN"}
+    assert expected.issubset(set(states)), f"Missing: {expected - set(states)}"

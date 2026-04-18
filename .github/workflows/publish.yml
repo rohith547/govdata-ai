@@ -1,0 +1,39 @@
+name: Publish to PyPI
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to publish (e.g. 0.1.0)'
+        required: true
+
+permissions:
+  id-token: write  # Required for PyPI Trusted Publisher (OIDC)
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment: pypi
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Build package
+        run: |
+          pip install build
+          python -m build
+
+      - name: Publish to PyPI (Trusted Publisher / OIDC)
+        uses: pypa/gh-action-pypi-publish@release/v1
+        # No password/token needed — uses OIDC Trusted Publisher
+        # Setup at: https://pypi.org/manage/account/publishing/
+        # Publisher settings:
+        #   Owner: rohith547
+        #   Repository: govdata-ai
+        #   Workflow: publish.yml
+        #   Environment: pypi
