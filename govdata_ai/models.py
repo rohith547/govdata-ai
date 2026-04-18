@@ -21,7 +21,9 @@ class SearchResult(BaseModel):
     @classmethod
     def must_be_gov_url(cls, v: str) -> str:
         """Zero hallucination policy: all URLs must point to official .gov domains."""
-        trusted_domains = [".gov", "naupa.org", "unclaimed.org", "missingmoney.com"]
+        trusted_domains = [".gov", ".us", "naupa.org", "unclaimed.org", "missingmoney.com",
+                           "data.providenceri.gov", "data.sonomacounty.ca.gov",
+                           "data.ramseycountymn.gov", "datahub.austintexas.gov"]
         if not any(domain in v for domain in trusted_domains):
             raise ValueError(
                 f"Source URL must be an official government or trusted domain. Got: {v}"
