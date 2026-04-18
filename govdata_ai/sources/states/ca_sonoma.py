@@ -13,7 +13,7 @@ class SonomaCountyCASource(SocrataSource):
     name = "Sonoma County, CA — Stale Dated Checks"
     state = "CA"
     domain = "data.sonomacounty.ca.gov"
-    dataset_id = "7en4-f9wn"
+    dataset_id = "7zt2-w5w6"
     name_field = "payeename"
     amount_field = "issueamount"
     date_field = "issuedate"
