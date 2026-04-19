@@ -132,9 +132,31 @@
       background: transparent; border: 1px solid var(--accent);
       color: var(--accent); border-radius: 8px;
       padding: 6px 14px; font-size: 0.8rem; font-weight: 500;
-      text-decoration: none; transition: all 0.2s;
+      text-decoration: none; transition: all 0.2s; cursor: pointer;
     }
     .claim-btn:hover { background: var(--accent); color: #fff; }
+    .how-btn {
+      display: inline-block; margin-top: 10px; margin-left: 8px;
+      background: transparent; border: 1px solid #334155;
+      color: #94a3b8; border-radius: 8px;
+      padding: 6px 14px; font-size: 0.8rem; font-weight: 500;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .how-btn:hover { border-color: var(--accent2); color: var(--accent2); }
+
+    /* Modal */
+    .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:1000; align-items:center; justify-content:center; padding:24px; }
+    .modal-overlay.open { display:flex; }
+    .modal { background:#13131a; border:1px solid #1e1e2e; border-radius:16px; max-width:520px; width:100%; padding:32px; position:relative; }
+    .modal h3 { font-size:1.2rem; font-weight:700; margin-bottom:8px; }
+    .modal .modal-source { color:#64748b; font-size:0.85rem; margin-bottom:20px; }
+    .modal ol { padding-left:20px; color:#94a3b8; font-size:0.95rem; line-height:1.8; }
+    .modal ol li { margin-bottom:8px; }
+    .modal ol li strong { color:#e2e8f0; }
+    .modal-close { position:absolute; top:16px; right:16px; background:none; border:none; color:#64748b; font-size:1.4rem; cursor:pointer; }
+    .modal-close:hover { color:#e2e8f0; }
+    .modal-cta { display:block; margin-top:20px; background:var(--accent); color:#fff; text-align:center; padding:12px; border-radius:8px; text-decoration:none; font-weight:700; }
+    .modal-cta:hover { opacity:0.85; }
 
     .loading { text-align: center; padding: 40px; color: var(--muted); }
     .spinner { display: inline-block; width: 28px; height: 28px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 12px; }
@@ -317,7 +339,129 @@
   Open Source · MIT License
 </footer>
 
+<!-- Claim Instructions Modal -->
+<div class="modal-overlay" id="claimModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <h3 id="modalTitle">How to Claim</h3>
+    <div class="modal-source" id="modalSource"></div>
+    <ol id="modalSteps"></ol>
+    <a class="modal-cta" id="modalCta" href="#" target="_blank" rel="noopener">Go to Official Claim Page →</a>
+  </div>
+</div>
+
 <script>
+  const CLAIM_INSTRUCTIONS = {
+    'RI': {
+      title: 'How to Claim — Providence, RI',
+      steps: [
+        '<strong>Visit the official page</strong> linked below',
+        '<strong>Download the claim form</strong> from the Finance Department page',
+        '<strong>Fill in your details</strong> — name, address, amount, check number if available',
+        '<strong>Attach proof of identity</strong> — government-issued ID (driver\'s license or passport)',
+        '<strong>Mail or email the form</strong> to the Providence Finance Department',
+        '<strong>Allow 4-8 weeks</strong> for processing — they will mail you a new check'
+      ]
+    },
+    'MN': {
+      title: 'How to Claim — Ramsey County, MN',
+      steps: [
+        '<strong>Visit the Probate Division</strong> linked below',
+        '<strong>Call the office</strong> at (651) 266-8266 to confirm your claim',
+        '<strong>Provide your relationship</strong> to the deceased (heir, spouse, child)',
+        '<strong>Submit identity documents</strong> — ID + proof of relationship (birth/marriage certificate)',
+        '<strong>File a petition</strong> with the probate court if required',
+        '<strong>Allow 60-90 days</strong> for estate processing'
+      ]
+    },
+    'TX': {
+      title: 'How to Claim — City of Austin, TX',
+      steps: [
+        '<strong>Visit the Austin Finance page</strong> linked below',
+        '<strong>Submit a claim request</strong> via the online form or email finance@austintexas.gov',
+        '<strong>Include your full name</strong>, mailing address, and phone number',
+        '<strong>Attach a copy of your photo ID</strong>',
+        '<strong>Allow 2-4 weeks</strong> for verification and payment'
+      ]
+    },
+    'CA_SONOMA': {
+      title: 'How to Claim — Sonoma County, CA',
+      steps: [
+        '<strong>Contact the Auditor-Controller</strong> office linked below',
+        '<strong>Call (707) 565-2631</strong> to start your claim',
+        '<strong>Provide the check details</strong> — your name, amount, and approximate date',
+        '<strong>Submit a signed claim form</strong> with a copy of your photo ID',
+        '<strong>Allow 30-60 days</strong> for processing'
+      ]
+    },
+    'CA_ROSEVILLE': {
+      title: 'How to Claim — City of Roseville, CA',
+      steps: [
+        '<strong>Visit the Finance page</strong> linked below',
+        '<strong>Call (916) 774-5360</strong> or email finance@roseville.ca.us',
+        '<strong>Provide your name and the check amount</strong>',
+        '<strong>Submit a valid photo ID</strong> for verification',
+        '<strong>Allow 4-6 weeks</strong> for reissuance of your check'
+      ]
+    },
+    'CA_MARIN': {
+      title: 'How to Claim — Marin County, CA',
+      steps: [
+        '<strong>Contact Marin County Payroll & Vendor Services</strong> via the link below',
+        '<strong>Call (415) 473-6187</strong> to report your unclaimed check',
+        '<strong>Provide your name, vendor/payee number</strong> if available',
+        '<strong>Submit a copy of your photo ID</strong>',
+        '<strong>Allow 30-45 days</strong> for a replacement check'
+      ]
+    },
+    'MA_PAYROLL': {
+      title: 'How to Claim — City of Framingham, MA',
+      steps: [
+        '<strong>Contact the Framingham Finance Department</strong> via the link below',
+        '<strong>Call (508) 532-5400</strong> or email finance@framinghamma.gov',
+        '<strong>Provide your name, employee ID</strong> (if payroll), and check amount',
+        '<strong>Submit a valid photo ID</strong>',
+        '<strong>Allow 3-6 weeks</strong> for processing'
+      ]
+    },
+    'MA_VENDOR': {
+      title: 'How to Claim — City of Framingham, MA',
+      steps: [
+        '<strong>Contact the Framingham Finance Department</strong> via the link below',
+        '<strong>Call (508) 532-5400</strong> or email finance@framinghamma.gov',
+        '<strong>Provide your business name and check details</strong>',
+        '<strong>Submit your business ID or personal photo ID</strong>',
+        '<strong>Allow 3-6 weeks</strong> for processing'
+      ]
+    },
+  };
+
+  function showClaimModal(sourceId, sourceName, claimUrl) {
+    const info = CLAIM_INSTRUCTIONS[sourceId] || {
+      title: 'How to Claim',
+      steps: [
+        '<strong>Click the official claim page</strong> button below',
+        '<strong>Look for a claim form</strong> on the page',
+        '<strong>Fill in your name and contact details</strong>',
+        '<strong>Attach a copy of your photo ID</strong>',
+        '<strong>Submit and wait</strong> for a response — usually 2-8 weeks'
+      ]
+    };
+    document.getElementById('modalTitle').innerHTML = info.title;
+    document.getElementById('modalSource').textContent = sourceName;
+    document.getElementById('modalSteps').innerHTML = info.steps.map(s => `<li>${s}</li>`).join('');
+    document.getElementById('modalCta').href = claimUrl;
+    document.getElementById('claimModal').classList.add('open');
+  }
+
+  function closeModal() {
+    document.getElementById('claimModal').classList.remove('open');
+  }
+
+  document.getElementById('claimModal').addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+  });
+
   const SOURCES = [
     {
       id: 'RI',
@@ -456,7 +600,7 @@
         const conf = tokenSimilarity(query, name);
         const amountRaw = src.amountField ? row[src.amountField] : null;
         const amount = amountRaw ? parseFloat(String(amountRaw).replace(/[,$]/g, '')) : null;
-        return { name, amount, conf, source: src.name, claimUrl: src.claimUrl, state: src.state, date: src.dateField ? row[src.dateField] : null };
+        return { name, amount, conf, source: src.name, sourceId: src.id, claimUrl: src.claimUrl, state: src.state, date: src.dateField ? row[src.dateField] : null };
       }).filter(r => r.conf >= 0.4);
     } catch (e) {
       return [];
@@ -508,6 +652,7 @@
               ${dateStr ? `<span>📅 ${dateStr}</span>` : ''}
             </div>
             <a class="claim-btn" href="${r.claimUrl}" target="_blank" rel="noopener">Claim on official site →</a>
+            <button class="how-btn" onclick="showClaimModal('${r.sourceId}', '${r.source.replace(/'/g,"\\'")}', '${r.claimUrl}')">📋 How to claim</button>
           </div>
           <div class="result-right">
             ${r.amount ? `<div class="amount">$${r.amount.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})}</div>` : '<div class="amount unknown">Amount varies</div>'}
