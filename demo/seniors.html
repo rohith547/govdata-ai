@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Lost Money Finder for Seniors — govdata-ai</title>
+  <meta name="description" content="Free step-by-step guide to find lost pensions, unclaimed property, Social Security benefits and more. Powered by govdata-ai."/>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #0f0f1a; color: #e2e8f0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 18px; line-height: 1.7; }
+
+    header { background: #13131a; border-bottom: 1px solid #1e1e2e; padding: 18px 24px; display: flex; align-items: center; gap: 16px; }
+    header a { color: #06b6d4; text-decoration: none; font-size: 0.9rem; }
+    header h1 { font-size: 1.2rem; font-weight: 700; }
+
+    .hero { max-width: 800px; margin: 0 auto; padding: 60px 24px 40px; text-align: center; }
+    .hero h2 { font-size: 2.4rem; font-weight: 800; line-height: 1.2; margin-bottom: 16px; }
+    .hero h2 span { color: #06b6d4; }
+    .hero p { color: #94a3b8; font-size: 1.15rem; max-width: 600px; margin: 0 auto 32px; }
+    .stat-row { display: flex; gap: 24px; justify-content: center; flex-wrap: wrap; margin-bottom: 48px; }
+    .stat-box { background: #13131a; border: 1px solid #1e1e2e; border-radius: 12px; padding: 20px 28px; text-align: center; }
+    .stat-num { font-size: 1.8rem; font-weight: 800; color: #7c3aed; }
+    .stat-label { font-size: 0.85rem; color: #64748b; margin-top: 4px; }
+
+    .steps { max-width: 800px; margin: 0 auto; padding: 0 24px 80px; }
+    .step { background: #13131a; border: 1px solid #1e1e2e; border-radius: 16px; padding: 32px; margin-bottom: 24px; transition: border-color 0.2s; }
+    .step:hover { border-color: #7c3aed; }
+    .step-header { display: flex; align-items: center; gap: 16px; margin-bottom: 16px; }
+    .step-num { width: 48px; height: 48px; border-radius: 50%; background: linear-gradient(135deg, #7c3aed, #06b6d4); display: flex; align-items: center; justify-content: center; font-size: 1.3rem; font-weight: 800; flex-shrink: 0; }
+    .step-title { font-size: 1.3rem; font-weight: 700; }
+    .step-amount { font-size: 0.9rem; color: #10b981; font-weight: 600; margin-top: 4px; }
+    .step p { color: #94a3b8; margin-bottom: 16px; font-size: 1rem; }
+    .step-action { display: inline-block; background: #7c3aed; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 1rem; transition: opacity 0.2s; }
+    .step-action:hover { opacity: 0.85; }
+    .step-action.secondary { background: #1e1e2e; border: 1px solid #334155; color: #e2e8f0; margin-left: 12px; }
+    .tip { background: rgba(6,182,212,0.08); border: 1px solid rgba(6,182,212,0.2); border-radius: 8px; padding: 12px 16px; margin-top: 16px; font-size: 0.9rem; color: #94a3b8; }
+    .tip strong { color: #06b6d4; }
+
+    /* Search embed */
+    .search-box { margin-top: 20px; }
+    .search-box input { width: 100%; padding: 14px 18px; border-radius: 8px; border: 1px solid #334155; background: #0f0f1a; color: #e2e8f0; font-size: 1rem; outline: none; }
+    .search-box input:focus { border-color: #7c3aed; }
+    .search-box button { margin-top: 10px; width: 100%; padding: 14px; background: #7c3aed; color: white; border: none; border-radius: 8px; font-size: 1rem; font-weight: 700; cursor: pointer; }
+    .search-box button:hover { opacity: 0.85; }
+    #results { margin-top: 16px; }
+    .result-card { background: #0f0f1a; border: 1px solid #1e1e2e; border-radius: 8px; padding: 14px; margin-bottom: 10px; }
+    .result-name { font-weight: 700; font-size: 1rem; }
+    .result-amount { color: #10b981; font-weight: 600; }
+    .result-source { color: #64748b; font-size: 0.85rem; }
+    .result-link { color: #06b6d4; font-size: 0.85rem; text-decoration: none; }
+
+    footer { text-align: center; padding: 40px 24px; color: #475569; font-size: 0.875rem; border-top: 1px solid #1e1e2e; }
+    footer a { color: #06b6d4; text-decoration: none; }
+
+    @media(max-width:600px){ .hero h2{font-size:1.7rem;} .stat-row{gap:12px;} }
+  </style>
+</head>
+<body>
+
+<header>
+  <a href="index.html">← Back to govdata-ai</a>
+  <h1>🧓 Lost Money Finder for Seniors</h1>
+</header>
+
+<div class="hero">
+  <h2>Billions in Lost Money<br/><span>Waiting to Be Claimed</span></h2>
+  <p>Most seniors have unclaimed money they don't know about — from old jobs, banks, insurance policies, and government programs. This free guide walks you through every place to look.</p>
+
+  <div class="stat-row">
+    <div class="stat-box">
+      <div class="stat-num">$49B</div>
+      <div class="stat-label">Unclaimed property in US</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-num">$300M+</div>
+      <div class="stat-label">Lost pensions (PBGC)</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-num">1 in 10</div>
+      <div class="stat-label">Americans have unclaimed money</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-num">Free</div>
+      <div class="stat-label">All searches below</div>
+    </div>
+  </div>
+</div>
+
+<div class="steps">
+
+  <!-- STEP 1: Unclaimed Property -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num">1</div>
+      <div>
+        <div class="step-title">Search Unclaimed Property by Name</div>
+        <div class="step-amount">$49 billion sitting in state databases</div>
+      </div>
+    </div>
+    <p>States hold unclaimed bank accounts, insurance payouts, stock dividends, and more. Search your name — and the names of your parents, spouse, or deceased relatives.</p>
+    <div class="search-box">
+      <input type="text" id="searchInput" placeholder="Enter your full name (e.g. John Smith)"/>
+      <button onclick="searchName()">Search Government Records</button>
+    </div>
+    <div id="results"></div>
+    <div class="tip"><strong>Tip:</strong> Also search your maiden name, your parents' names, and any old addresses you lived at.</div>
+    <div class="tip"><strong>Also search:</strong> <a href="https://missingmoney.com" target="_blank" style="color:#06b6d4">missingmoney.com</a> — covers all 50 states including California ($15B) and New York ($19B)</div>
+  </div>
+
+  <!-- STEP 2: Lost Pension -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num">2</div>
+      <div>
+        <div class="step-title">Find a Lost Pension</div>
+        <div class="step-amount">Millions of Americans have forgotten pensions from old jobs</div>
+      </div>
+    </div>
+    <p>If you worked for a company that went bankrupt or merged, your pension may be held by the PBGC (Pension Benefit Guaranty Corporation) — the government agency that protects pensions.</p>
+    <a href="https://www.pbgc.gov/workers-retirees/find-your-pension" target="_blank" class="step-action">Search PBGC Pension Database ↗</a>
+    <a href="https://www.dol.gov/agencies/ebsa/workers-and-families/lost-pension-and-savings-plan-information" target="_blank" class="step-action secondary">DOL Pension Search ↗</a>
+    <div class="tip"><strong>What you need:</strong> Your old employer's name, approximate years worked, and your Social Security number. The search is free and takes 5 minutes.</div>
+  </div>
+
+  <!-- STEP 3: Social Security -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num">3</div>
+      <div>
+        <div class="step-title">Check Your Social Security Benefits</div>
+        <div class="step-amount">Many people claim too early and lose thousands</div>
+      </div>
+    </div>
+    <p>If you haven't claimed Social Security yet, check your statement to see your estimated benefit. Waiting until age 70 instead of 62 can increase your monthly benefit by up to 77%.</p>
+    <a href="https://www.ssa.gov/myaccount/" target="_blank" class="step-action">View Your SSA Statement ↗</a>
+    <div class="tip"><strong>Survivor benefits:</strong> If your spouse passed away, you may be entitled to their Social Security benefit if it's higher than yours. Call SSA at 1-800-772-1213.</div>
+  </div>
+
+  <!-- STEP 4: Life Insurance -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num">4</div>
+      <div>
+        <div class="step-title">Find Unclaimed Life Insurance</div>
+        <div class="step-amount">$1 billion+ in unclaimed life insurance policies</div>
+      </div>
+    </div>
+    <p>If a parent or spouse passed away, they may have had life insurance policies you didn't know about. Insurance companies are required to try to find beneficiaries — but many never claim.</p>
+    <a href="https://eapps.naic.org/life-policy-locator/#/" target="_blank" class="step-action">Search NAIC Life Policy Locator ↗</a>
+    <div class="tip"><strong>Free and official:</strong> The NAIC (National Association of Insurance Commissioners) policy locator searches participating insurers for free.</div>
+  </div>
+
+  <!-- STEP 5: Veterans Benefits -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num">5</div>
+      <div>
+        <div class="step-title">Unclaimed Veterans Benefits</div>
+        <div class="step-amount">Billions in unclaimed VA benefits every year</div>
+      </div>
+    </div>
+    <p>If you or a family member served in the military, you may be entitled to benefits you never claimed — disability compensation, education benefits, burial benefits, and more.</p>
+    <a href="https://www.va.gov/decision-reviews/insurance-claims/" target="_blank" class="step-action">Check VA Benefits ↗</a>
+    <a href="https://www.benefits.va.gov/insurance/sglisite.asp" target="_blank" class="step-action secondary">VA Insurance Search ↗</a>
+    <div class="tip"><strong>Free help:</strong> Call 1-800-827-1000 — VA benefits counselors help you find what you're owed at no cost.</div>
+  </div>
+
+  <!-- STEP 6: Tax Refunds -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num">6</div>
+      <div>
+        <div class="step-title">Unclaimed Tax Refunds</div>
+        <div class="step-amount">IRS holds $1B+ in unclaimed refunds each year</div>
+      </div>
+    </div>
+    <p>If you didn't file a tax return in the last 3 years, you may have a refund waiting. The IRS holds unclaimed refunds for 3 years — after that, the money goes to the US Treasury permanently.</p>
+    <a href="https://www.irs.gov/refunds" target="_blank" class="step-action">Check IRS Refund Status ↗</a>
+    <div class="tip"><strong>Note:</strong> You need to file a return to claim the refund — even if you had little or no income. Many seniors qualify for the Earned Income Tax Credit they never claimed.</div>
+  </div>
+
+  <!-- STEP 7: Bank Accounts -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num">7</div>
+      <div>
+        <div class="step-title">Forgotten Bank Accounts & Savings Bonds</div>
+        <div class="step-amount">$25 billion in uncashed savings bonds</div>
+      </div>
+    </div>
+    <p>Old bank accounts go to the state after 3-5 years of inactivity. Paper savings bonds from the 1950s-1990s may still be earning interest and are redeemable at any time.</p>
+    <a href="https://www.treasurydirect.gov/savings-bonds/treasury-hunt/" target="_blank" class="step-action">Treasury Hunt — Find Savings Bonds ↗</a>
+    <div class="tip"><strong>Paper bonds never expire.</strong> If you find old paper savings bonds in a drawer, they are still valid. Redeem them at any bank or through TreasuryDirect.gov.</div>
+  </div>
+
+</div>
+
+<footer>
+  <p>Powered by <a href="index.html">govdata-ai</a> · All searches are free · Data from official US government sources</p>
+  <p style="margin-top:8px">Built by <a href="https://rohith547.github.io">Rohith Shabad</a> · <a href="https://github.com/rohith547/govdata-ai">GitHub</a></p>
+</footer>
+
+<script>
+const SOURCES = [
+  { name: 'Rhode Island', domain: 'data.ri.gov', dataset: '4hhd-fzq6', nameField: 'owner_name' },
+  { name: 'CA Sonoma County', domain: 'data.sonomacounty.ca.gov', dataset: '7zt2-w5w6', nameField: 'name' },
+  { name: 'CA Roseville', domain: 'data.roseville.ca.gov', dataset: 'vtyn-52t8', nameField: 'name' },
+  { name: 'CA Marin County', domain: 'data.marincounty.org', dataset: 'er4x-svwp', nameField: 'name' },
+  { name: 'MN Ramsey County', domain: 'information.ramseycounty.us', dataset: 't2fe-qrnd', nameField: 'name' },
+];
+
+async function searchName() {
+  const term = document.getElementById('searchInput').value.trim();
+  if (!term) return;
+  const out = document.getElementById('results');
+  out.innerHTML = '<p style="color:#94a3b8;margin-top:12px">Searching government databases...</p>';
+
+  const parts = term.toUpperCase().split(/\s+/);
+  const allResults = [];
+
+  await Promise.all(SOURCES.map(async src => {
+    try {
+      const conditions = parts.map(p => `upper(${src.nameField}) like upper('${encodeURIComponent('%'+p+'%')}')`).join(' AND ');
+      const where = encodeURIComponent(`upper(${src.nameField}) like upper('%${parts.join('%')}%')`);
+      const url = `https://${src.domain}/resource/${src.dataset}.json?$where=${where}&$limit=5`;
+      const resp = await fetch(url);
+      const data = await resp.json();
+      data.forEach(r => {
+        const name = r[src.nameField] || r.owner_name || r.name || '';
+        const amount = r.amount || r.property_value || r.balance || '';
+        allResults.push({ name, amount, source: src.name });
+      });
+    } catch(e) {}
+  }));
+
+  if (allResults.length === 0) {
+    out.innerHTML = `<div style="margin-top:16px;padding:20px;background:#13131a;border:1px solid #1e1e2e;border-radius:8px;color:#94a3b8">
+      <strong style="color:#e2e8f0">No results found in our 8 databases.</strong><br/><br/>
+      Try these official searches:<br/>
+      • <a href="https://missingmoney.com" target="_blank" style="color:#06b6d4">missingmoney.com</a> — all 50 states<br/>
+      • <a href="https://www.pbgc.gov/workers-retirees/find-your-pension" target="_blank" style="color:#06b6d4">PBGC Pension Search</a><br/>
+      • Your state's unclaimed property website
+    </div>`;
+    return;
+  }
+
+  out.innerHTML = `<p style="color:#10b981;margin-top:12px;font-weight:600">Found ${allResults.length} record(s):</p>`;
+  allResults.forEach(r => {
+    const amt = r.amount ? `$${parseFloat(String(r.amount).replace(/[$,]/g,'')).toLocaleString()}` : '';
+    out.innerHTML += `<div class="result-card">
+      <div class="result-name">${r.name}</div>
+      ${amt ? `<div class="result-amount">${amt}</div>` : ''}
+      <div class="result-source">📍 ${r.source}</div>
+    </div>`;
+  });
+}
+
+document.getElementById('searchInput').addEventListener('keypress', e => {
+  if (e.key === 'Enter') searchName();
+});
+</script>
+</body>
+</html>
